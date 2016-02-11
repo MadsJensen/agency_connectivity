@@ -18,7 +18,7 @@ montage = mne.channels.read_montage("biosemi64")
 data_folder = "/home/mje/Projects/agency_connectivity/data/"
 
 
-# Functions #
+# Functions
 def convert_bdf2fif(subject):
     """Convert bdf data to fiff.
 
@@ -26,6 +26,10 @@ def convert_bdf2fif(subject):
     ----------
     subject: string
         The subject to convert.
+
+    Returns
+    -------
+    None, but save fiff file.
     """
     raw = mne.io.read_raw_edf(data_folder + "%s_ds.bdf" % subject,
                               montage=montage,
@@ -146,8 +150,19 @@ def compute_ica(subject):
     plt.close("all")
 
 
-def epoch_data(subject):
+def epoch_data(subject, save=True):
     """Epoch a raw data set.
+
+    Parameters
+    ----------
+    subject : str
+        The subject to be epoched.
+    save : bool
+        Whether to save the epochs or not.
+
+    Returns
+    -------
+    epochs
     """
     # SETTINGS
     tmin, tmax = -2, 2
@@ -166,3 +181,5 @@ def epoch_data(subject):
                         preload=True)
 
     epochs.save(data_folder + "%s_ds_bp_ica-epo.fif" % subject)
+
+    return epochs

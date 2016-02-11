@@ -126,17 +126,17 @@ def compute_ica(subject):
     # DETECT EOG BY CORRELATION
     # HORIZONTAL EOG
     eog_epochs = create_eog_epochs(raw, ch_name="EXG4")
-    eog_inds, scores = ica.find_bads_eog(raw, ch_name="EXG4")
-    fig = ica.plot_scores(scores, exclude=eog_inds,
+    eog_indices, scores = ica.find_bads_eog(raw, ch_name="EXG4")
+    fig = ica.plot_scores(scores, exclude=eog_indices,
                           title=title % ('eog', subject))
     fig.savefig(data_folder + "pics/%s_eog_scores.png" % subject)
 
-    fig = ica.plot_components(eog_inds, title=title % ('eog', subject),
+    fig = ica.plot_components(eog_indices, title=title % ('eog', subject),
                               colorbar=True)
     fig.savefig(data_folder + "pics/%s_eog_component.png" % subject)
 
-    eog_inds = eog_inds[:n_max_eog]
-    ica.exclude += eog_inds
+    eog_indices = eog_indices[:n_max_eog]
+    ica.exclude += eog_indices
 
     del eog_epochs
 
@@ -180,6 +180,7 @@ def epoch_data(subject, save=True):
                         baseline=(None, -1.5), reject=reject,
                         preload=True)
 
-    epochs.save(data_folder + "%s_ds_bp_ica-epo.fif" % subject)
+    if save:
+        epochs.save(data_folder + "%s_ds_bp_ica-epo.fif" % subject)
 
     return epochs

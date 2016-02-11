@@ -5,14 +5,14 @@ Preprocessing function for the bdf.
 @email: mads [] cnru.dk
 """
 import mne
-from mne.preprocessing import ICA, create_ecg_epochs, create_eog_epochs
+from mne.preprocessing import ICA, create_eog_epochs
 import matplotlib.pyplot as plt
+
 # SETTINGS
 n_jobs = 1
 reject = dict(eeg=300e-6)  # uVolts (EEG)
-l_freq, h_freq = 1, 98  # High and low frequency setting for the band pass
-n_freq = 50  # notch filter frequency
-decim = 2  # decim value
+l_freq, h_freq, n_freq = 1, 98, 50  # Frequency setting for high, low, Noise
+decim = 1  # decim value
 montage = mne.channels.read_montage("biosemi64")
 
 data_folder = "/home/mje/Projects/agency_connectivity/data/"
@@ -27,7 +27,7 @@ def convert_bdf2fif(subject):
     subject: string
         The subject to convert.
     """
-    raw = mne.io.read_raw_edf(data_folder + "%s.bdf" % subject,
+    raw = mne.io.read_raw_edf(data_folder + "%s_ds.bdf" % subject,
                               montage=montage,
                               eog=["EXG3", "EXG4", "EXG5", "EXG6"],
                               misc=["EXG1", "EXG2", "EXG7", "EXG8"],
@@ -36,14 +36,31 @@ def convert_bdf2fif(subject):
     raw.save(data_folder + "%s-raw.fif" % subject, overwrite=True)
 
 
-def compute_ica(subject):
-    """Function will compute ICA on raw and apply the ICA.
+def filter_raw(subject):
+    """Filter raw fifs.
 
-    params:
+    Parameters
+    ----------
     subject : string
         the subject id to be loaded
     """
-    raw = mne.io.Raw(data_folder + "%s_ds_hp_lp_raw.fif" % subject,
+    raw = mne.io.Raw(data_folder + "%s-raw.fif" % subject, preload=True)
+    raw.set_montage = montage
+    raw.apply_proj()
+    raw.notch_filter(n_freq)
+    raw.filter(l_freq, h_freq)
+    raw.save(data_folder + "%s_ds_bp-raw.fif" % subject, overwrite=True)
+
+
+def compute_ica(subject):
+    """Function will compute ICA on raw and apply the ICA.
+
+    Parameters
+    ----------
+    subject : string
+        the subject id to be loaded
+    """
+    raw = mne.io.Raw(data_folder + "%s_ds_bp-raw.fif" % subject,
                      preload=True)
     raw.set_montage = montage
     raw.apply_proj()
@@ -124,7 +141,7 @@ def compute_ica(subject):
     raw_ica = ica.apply(raw, copy=False)
     ica.save(data_folder + "%s-ica.fif" % subject)  # save ICA componenets
     # Save raw with ICA removed
-    raw_ica.save(data_folder + "%s_ds_hp_lp_ica_raw.fif" % subject,
+    raw_ica.save(data_folder + "%s_ds_bp_ica-raw.fif" % subject,
                  overwrite=True)
     plt.close("all")
 
@@ -137,7 +154,7 @@ def epoch_data(subject):
     event_id = {'voluntary': 243,
                 'involuntary': 219}
 
-    raw = mne.io.Raw(data_folder + "%s_ds_hp_lp_ica_raw.fif" % subject)
+    raw = mne.io.Raw(data_folder + "%s_ds_bp_ica-raw.fif" % subject)
     events = mne.find_events(raw)
 
     #   Setup for reading the raw data
@@ -148,4 +165,4 @@ def epoch_data(subject):
                         baseline=(None, -1.5), reject=reject,
                         preload=True)
 
-    epochs.save(data_folder + "%s_ds_hp_lp_ica-epo.fif" % subject)
+    epochs.save(data_folder + "%s_ds_bp_ica-epo.fif" % subject)

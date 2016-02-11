@@ -1,5 +1,11 @@
+"""
+Functions for TF analysis.
 
-import mne
+@author: mje
+@email: mads [] cnru.dk
+"""
+
+# import mne
 from mne.time_frequency import psd_multitaper
 from mne.viz import iter_topography
 import matplotlib.pyplot as plt
@@ -7,7 +13,7 @@ import numpy as np
 
 
 def calc_psd_epochs(epochs, plot=False):
-    """Calculate PSD for epoch
+    """Calculate PSD for epoch.
 
     Parameters
     ----------
@@ -15,7 +21,7 @@ def calc_psd_epochs(epochs, plot=False):
     """
     tmin, tmax = -0.5, 0.5
     fmin, fmax = 2, 90
-    n_fft = 2048  # the FFT size (n_fft). Ideally a power of 2
+    # n_fft = 2048  # the FFT size (n_fft). Ideally a power of 2
     psds_vol, freqs = psd_multitaper(epochs["voluntary"],
                                      tmin=tmin, tmax=tmax,
                                      fmin=fmin, fmax=fmax)
@@ -27,14 +33,8 @@ def calc_psd_epochs(epochs, plot=False):
     psds_inv = 20 * np.log10(psds_inv)  # scale to dB
 
     if plot:
-
         def my_callback(ax, ch_idx):
-            """
-            This block of code is executed once you click on one of the
-            channel axes in the plot. To work with the viz internals,
-            this function should only take two parameters, the axis
-            and the channel or data index.
-            """
+            """Executed once you click on one of the channels in the plot."""
             ax.plot(freqs, psds_vol_plot[ch_idx], color='red',
                     label="voluntary")
             ax.plot(freqs, psds_inv_plot[ch_idx], color='blue',

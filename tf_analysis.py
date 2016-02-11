@@ -18,6 +18,15 @@ def calc_psd_epochs(epochs, plot=False):
     Parameters
     ----------
     epochs : list of epochs
+    plot : bool
+        To show plot of the psds. It will be average for each condition that is shown.
+
+    Returns
+    -------
+    psds_vol : numpy array
+        The psds for the voluntary condition.
+    psds_invol : numpy array
+        The psds for the involuntary condition.
     """
     tmin, tmax = -0.5, 0.5
     fmin, fmax = 2, 90

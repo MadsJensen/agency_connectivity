@@ -9,6 +9,9 @@ from mne.preprocessing import ICA, create_eog_epochs
 import matplotlib.pyplot as plt
 
 # SETTINGS
+from sqlalchemy.sql.elements import True_
+from sympy.core.trace import Tr
+
 n_jobs = 1
 reject = dict(eeg=300e-6)  # uVolts (EEG)
 l_freq, h_freq, n_freq = 1, 98, 50  # Frequency setting for high, low, Noise
@@ -177,10 +180,29 @@ def epoch_data(subject, save=True):
                            stim=False, exclude='bads')
     # Read epochs
     epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=picks,
-                        baseline=(None, -1.5), reject=reject,
+                        baseline=(None, -1.8), reject=reject,
                         preload=True)
 
     if save:
         epochs.save(data_folder + "%s_ds_bp_ica-epo.fif" % subject)
 
+    return epochs
+
+
+def hilbert_process(raw, l_freq, h_freq):
+
+    tmin, tmax = -2, 2
+    event_id = {'voluntary': 243,
+                'involuntary': 219}
+    picks = mne.pick_types(raw.info, meg=False, eeg=True,
+                           stim=False, exclude='bads')
+    raw_tmp = raw.copy()
+    raw_tmp.filter(l_freq, h_freq)
+    raw_tmp.apply_hilbert(picks=picks, envelope=True)
+
+    events = mne.find_events(raw)
+    # Read epochs
+    epochs = mne.Epochs(raw_tmp, events, event_id, tmin, tmax, picks=picks,
+                        baseline=(None, -1.8), reject=reject,
+                        preload=True)
     return epochs

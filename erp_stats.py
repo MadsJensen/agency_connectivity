@@ -85,6 +85,7 @@ neighbor_file = '/home/mje/Toolboxes/fieldtrip/template/neighbours' \
                  '/biosemi64_neighb'
 connectivity, ft_ch_names = mne.channels.read_ch_connectivity(neighbor_file,
                                                               picks=picks)
+
 threshold = None
 n_permutations = 2000
 tail = 0
@@ -92,7 +93,8 @@ tail = 0
 T_obs, clusters, cluster_p_values, H0 =\
     spatio_temporal_cluster_test([data_vol, data_invol],
                                  n_permutations=n_permutations,
-                                 threshold=threshold, tail=tail,
+                                 threshold=threshold,
+                                 tail=tail,
                                  out_type="mask",
                                  connectivity=connectivity,
                                  n_jobs=2)

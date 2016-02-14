@@ -6,7 +6,7 @@ Functions for TF analysis.
 """
 
 # import mne
-from mne.time_frequency import psd_multitaper
+from mne.time_frequency import psd_multitaper, tfr_multitaper, tfr_morlet
 from mne.viz import iter_topography
 import matplotlib.pyplot as plt
 import numpy as np
@@ -62,8 +62,58 @@ def calc_psd_epochs(epochs, plot=False):
                                        on_pick=my_callback):
             ax.plot(psds_vol_plot[idx], color='red', label="voluntary")
             ax.plot(psds_inv_plot[idx], color='blue', label="involuntary")
-        plt.legend
+        plt.legend()
         plt.gcf().suptitle('Power spectral densities')
         plt.show()
 
     return psds_vol, psds_inv, freqs
+
+
+def multitaper_analysis(epochs):
+    """
+
+    Parameters
+    ----------
+    epochs : list of epochs
+
+    Returns
+    -------
+    result : numpy array
+        The result of the multitaper analysis.
+
+    """
+    frequencies = np.arange(6., 90., 2.)
+    n_cycles = frequencies / 2.
+    time_bandwidth = 4  # Same time-smoothing as (1), 7 tapers.
+    power, plv = tfr_multitaper(epochs, freqs=frequencies, n_cycles=n_cycles,
+                                time_bandwidth=time_bandwidth, return_itc=True)
+
+    return power, plv
+
+
+def morlet_analysis(epochs):
+    """
+
+    Parameters
+    ----------
+    epochs : list of epochs
+
+    Returns
+    -------
+    result : numpy array
+        The result of the multitaper analysis.
+
+    """
+    frequencies = np.arange(6., 90., 2.)
+    n_cycles = frequencies / 2.
+    power, plv = tfr_morlet(epochs, freqs=frequencies, n_cycles=n_cycles,
+                            return_itc=True,
+                            verbose=True)
+
+    return power, plv
+
+
+# Plot results. Baseline correct based on first 100 ms.
+power.plot([0], baseline=(0., 0.1), mode='mean', vmin=-1., vmax=3.,
+           title='Sim: Less time smoothing, more frequency smoothing')
+

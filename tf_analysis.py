@@ -6,7 +6,8 @@ Functions for TF analysis.
 """
 
 # import mne
-from mne.time_frequency import psd_multitaper, tfr_multitaper, tfr_morlet
+from mne.time_frequency import (psd_multitaper, tfr_multitaper, tfr_morlet,
+                                cwt_morlet)
 from mne.viz import iter_topography
 import matplotlib.pyplot as plt
 import numpy as np
@@ -106,14 +107,34 @@ def morlet_analysis(epochs):
     """
     frequencies = np.arange(6., 90., 2.)
     n_cycles = frequencies / 2.
-    power, plv = tfr_morlet(epochs, freqs=frequencies, n_cycles=n_cycles,
+    power, plv = tfr_morlet(epochs, freqs=frequencies, n_cycles=4,
                             return_itc=True,
                             verbose=True)
 
     return power, plv
 
 
-# Plot results. Baseline correct based on first 100 ms.
-power.plot([0], baseline=(0., 0.1), mode='mean', vmin=-1., vmax=3.,
-           title='Sim: Less time smoothing, more frequency smoothing')
+def single_trial_tf(epochs):
+    """
+    Parameters:
+    ----------
+    epochs
+
+    Returns
+    -------
+
+    """
+
+    results = []
+    frequencies = np.arange(6., 90., 2.)
+    n_cycles = 4.
+    for j in range(len(epochs)):
+        tfr = cwt_morlet(epochs.get_data()[j],
+                          sfreq=epochs.info["sfreq"],
+                          freqs=frequencies,
+                          use_fft=True,
+                          n_cycles=n_cycles,
+                          zero_mean=False)
+        results.append(tfr)
+    return results
 

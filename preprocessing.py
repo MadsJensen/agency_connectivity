@@ -195,10 +195,14 @@ def hilbert_process(raw, bands, return_evoked=False):
     raw : ???
         The raw data to be transformed.
     bands : dict
-        Dictionary with frequencies to calculate.
-    return_return_evoked : bool
+        Dictionary with frequencies to calculate. Shape "band": [low, high]
+    return_evoked : bool
         If true, an evoked data set will be returned, if False epochs will be
         returned.
+
+    Returns
+    -------
+
     """
     tmin, tmax = -2, 2
     event_id = {'voluntary': 243,
@@ -216,6 +220,7 @@ def hilbert_process(raw, bands, return_evoked=False):
         # Read epochs
         epochs = mne.Epochs(raw_tmp, events, event_id, tmin, tmax,
                             picks=picks, baseline=(None, -1.8), reject=reject)
+
         if return_evoked:
             evokeds = []
             for cond in epochs.event_id.keys():
@@ -225,4 +230,3 @@ def hilbert_process(raw, bands, return_evoked=False):
             results_dict[band] = epochs
 
     return results_dict
-

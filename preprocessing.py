@@ -192,6 +192,7 @@ def hilbert_process(raw, bands, return_evoked=False):
 
     Parameters
     ----------
+
     raw : ???
         The raw data to be transformed.
     bands : dict
@@ -202,7 +203,9 @@ def hilbert_process(raw, bands, return_evoked=False):
 
     Returns
     -------
-
+    Epochs if return_evoked is False. These are complex number!
+    if return_evoked is True, an evoked object is returned. This does only
+    have the envelope.
     """
     tmin, tmax = -2, 2
     event_id = {'voluntary': 243,
@@ -215,18 +218,22 @@ def hilbert_process(raw, bands, return_evoked=False):
     for band in bands.keys():
         raw_tmp = raw.copy()
         raw_tmp.filter(bands[band][0], bands[band][1])
-        raw_tmp.apply_hilbert(picks=picks, envelope=True)
-
-        # Read epochs
-        epochs = mne.Epochs(raw_tmp, events, event_id, tmin, tmax,
-                            picks=picks, baseline=(None, -1.8), reject=reject)
 
         if return_evoked:
             evokeds = []
+            raw_tmp.apply_hilbert(picks=picks, envelope=True)
+            epochs = mne.Epochs(raw_tmp, events, event_id, tmin, tmax,
+                                picks=picks, baseline=(None, -1.8),
+                                reject=reject)
             for cond in epochs.event_id.keys():
                 evokeds.append(epochs[cond].average())
             results_dict[band] = evokeds
         else:
+            raw_tmp.apply_hilbert(picks=picks, envelope=False)
+            epochs = mne.Epochs(raw_tmp, events, event_id, tmin, tmax,
+                                picks=picks, baseline=(None, -1.8),
+                                reject=reject)
             results_dict[band] = epochs
 
     return results_dict
+

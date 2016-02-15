@@ -11,6 +11,7 @@ import numpy as np
 from mne.stats import (spatio_temporal_cluster_test,
                        permutation_cluster_test)
 
+from erp_stats import hilbert_process
 
 data_folder = "/home/mje/Projects/agency_connectivity/data/"
 
@@ -144,4 +145,13 @@ vol_ave.plot_topomap(times=plot_times, ch_type='eeg',
                      cmap='viridis',
                      show_names=False,
                      title="Voluntary")
+
+raw = mne.io.Raw( data_folder + "P2_ds_bp_ica-raw.fif", preload=True)
+bands = {"alpha": [8, 12],
+         "beta": [13, 25],
+         "gamma_low": [30, 48],
+         "gamma_high": [52, 90],
+         "theta": [4, 8]}
+
+res = hilbert_process(raw, bands, return_evoked=True)
 

@@ -7,11 +7,9 @@ Preprocessing function for the bdf.
 import mne
 from mne.preprocessing import ICA, create_eog_epochs
 import matplotlib.pyplot as plt
+import numpy as np
 
 # SETTINGS
-from sqlalchemy.sql.elements import True_
-from sympy.core.trace import Tr
-
 n_jobs = 1
 reject = dict(eeg=300e-6)  # uVolts (EEG)
 l_freq, h_freq, n_freq = 1, 98, 50  # Frequency setting for high, low, Noise
@@ -189,20 +187,42 @@ def epoch_data(subject, save=True):
     return epochs
 
 
-def hilbert_process(raw, l_freq, h_freq):
+def hilbert_process(raw, bands, return_evoked=False):
+    """
 
+    Parameters
+    ----------
+    raw : ???
+        The raw data to be transformed.
+    bands : dict
+        Dictionary with frequencies to calculate.
+    return_return_evoked : bool
+        If true, an evoked data set will be returned, if False epochs will be
+        returned.
+    """
     tmin, tmax = -2, 2
     event_id = {'voluntary': 243,
                 'involuntary': 219}
     picks = mne.pick_types(raw.info, meg=False, eeg=True,
                            stim=False, exclude='bads')
-    raw_tmp = raw.copy()
-    raw_tmp.filter(l_freq, h_freq)
-    raw_tmp.apply_hilbert(picks=picks, envelope=True)
-
     events = mne.find_events(raw)
-    # Read epochs
-    epochs = mne.Epochs(raw_tmp, events, event_id, tmin, tmax, picks=picks,
-                        baseline=(None, -1.8), reject=reject,
-                        preload=True)
-    return epochs
+    results_dict = {}
+
+    for band in bands.keys():
+        raw_tmp = raw.copy()
+        raw_tmp.filter(bands[band][0], bands[band][1])
+        raw_tmp.apply_hilbert(picks=picks, envelope=True)
+
+        # Read epochs
+        epochs = mne.Epochs(raw_tmp, events, event_id, tmin, tmax,
+                            picks=picks, baseline=(None, -1.8), reject=reject)
+        if return_evoked:
+            evokeds = []
+            for cond in epochs.event_id.keys():
+                evokeds.append(epochs[cond].average())
+            results_dict[band] = evokeds
+        else:
+            results_dict[band] = epochs
+
+    return results_dict
+

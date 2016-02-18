@@ -5,7 +5,7 @@ Functions for TF analysis.
 @email: mads [] cnru.dk
 """
 
-# import mne
+import mne
 from mne.time_frequency import (psd_multitaper, tfr_multitaper, tfr_morlet,
                                 cwt_morlet)
 from mne.viz import iter_topography
@@ -92,7 +92,7 @@ def multitaper_analysis(epochs):
     return power, plv
 
 
-def morlet_analysis(epochs):
+def morlet_analysis(epochs, n_cycles=4):
     """
 
     Parameters
@@ -105,9 +105,10 @@ def morlet_analysis(epochs):
         The result of the multitaper analysis.
 
     """
-    frequencies = np.arange(6., 90., 2.)
-    n_cycles = frequencies / 2.
-    power, plv = tfr_morlet(epochs, freqs=frequencies, n_cycles=4,
+    frequencies = np.arange(6., 30., 2.)
+    # n_cycles = frequencies / 2.
+
+    power, plv = tfr_morlet(epochs, freqs=frequencies, n_cycles=n_cycles,
                             return_itc=True,
                             verbose=True)
 
@@ -116,25 +117,28 @@ def morlet_analysis(epochs):
 
 def single_trial_tf(epochs):
     """
-    Parameters:
+
+
+    Parameters
     ----------
-    epochs
+    epochs : Epochs object
+        The epochs to calculate TF analysis on.
 
     Returns
     -------
-
+    results : numpy array
     """
 
     results = []
-    frequencies = np.arange(6., 90., 2.)
-    n_cycles = 4.
+    frequencies = np.arange(6., 30., 1.)
+    n_cycles = 5.
     for j in range(len(epochs)):
         tfr = cwt_morlet(epochs.get_data()[j],
-                          sfreq=epochs.info["sfreq"],
-                          freqs=frequencies,
-                          use_fft=True,
-                          n_cycles=n_cycles,
-                          zero_mean=False)
+                         sfreq=epochs.info["sfreq"],
+                         freqs=frequencies,
+                         use_fft=True,
+                         n_cycles=n_cycles,
+                         zero_mean=False)
         results.append(tfr)
     return results
 

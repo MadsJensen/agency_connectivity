@@ -7,7 +7,6 @@ Preprocessing function for the bdf.
 import mne
 from mne.preprocessing import ICA, create_eog_epochs
 import matplotlib.pyplot as plt
-import numpy as np
 
 # SETTINGS
 n_jobs = 1
@@ -16,11 +15,11 @@ l_freq, h_freq, n_freq = 1, 98, 50  # Frequency setting for high, low, Noise
 decim = 1  # decim value
 montage = mne.channels.read_montage("biosemi64")
 
-data_folder = "/home/mje/Projects/agency_connectivity/data/"
+# data_folder = "/home/mje/Projects/agency_connectivity/data/"
 
 
 # Functions
-def convert_bdf2fif(subject):
+def convert_bdf2fif(subject, data_folder):
     """Convert bdf data to fiff.
 
     Parameters
@@ -41,7 +40,7 @@ def convert_bdf2fif(subject):
     raw.save(data_folder + "%s-raw.fif" % subject, overwrite=True)
 
 
-def filter_raw(subject):
+def filter_raw(subject, data_folder):
     """Filter raw fifs.
 
     Parameters
@@ -57,7 +56,7 @@ def filter_raw(subject):
     raw.save(data_folder + "%s_ds_bp-raw.fif" % subject, overwrite=True)
 
 
-def compute_ica(subject):
+def compute_ica(subject, data_folder):
     """Function will compute ICA on raw and apply the ICA.
 
     Parameters
@@ -81,7 +80,7 @@ def compute_ica(subject):
     ica.fit(raw, picks=picks, decim=decim, reject=reject)
 
     # maximum number of components to reject
-    n_max_ecg, n_max_eog = 3, 1
+    n_max_eog = 1
 
     ##########################################################################
     # 2) identify bad components by analyzing latent sources.
@@ -151,7 +150,7 @@ def compute_ica(subject):
     plt.close("all")
 
 
-def epoch_data(subject, save=True):
+def epoch_data(subject, data_folder, save=True):
     """Epoch a raw data set.
 
     Parameters
@@ -178,7 +177,7 @@ def epoch_data(subject, save=True):
                            stim=False, exclude='bads')
     # Read epochs
     epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=picks,
-                        baseline=(None, -1.8), reject=reject,
+                        baseline=(None, -1.8), reject=None,
                         preload=True)
 
     if save:
@@ -188,7 +187,7 @@ def epoch_data(subject, save=True):
 
 
 def hilbert_process(raw, bands, return_evoked=False):
-    """
+    """Make hilbert transform of raw data and epoch it.
 
     Parameters
     ----------
@@ -231,9 +230,8 @@ def hilbert_process(raw, bands, return_evoked=False):
         else:
             raw_tmp.apply_hilbert(picks=picks, envelope=False)
             epochs = mne.Epochs(raw_tmp, events, event_id, tmin, tmax,
-                                picks=picks, baseline=(None, -1.8),
+                                picks=picks, baseline=None,
                                 reject=reject)
             results_dict[band] = epochs
 
     return results_dict
-

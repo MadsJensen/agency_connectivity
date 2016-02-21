@@ -20,7 +20,8 @@ def calc_psd_epochs(epochs, plot=False):
     ----------
     epochs : list of epochs
     plot : bool
-        To show plot of the psds. It will be average for each condition that is shown.
+        To show plot of the psds.
+        It will be average for each condition that is shown.
 
     Returns
     -------
@@ -141,4 +142,3 @@ def single_trial_tf(epochs):
                          zero_mean=False)
         results.append(tfr)
     return results
-

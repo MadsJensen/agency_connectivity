@@ -116,7 +116,7 @@ def morlet_analysis(epochs, n_cycles=4):
     return power, plv
 
 
-def single_trial_tf(epochs):
+def single_trial_tf(epochs, n_cycles=4.):
     """
 
 
@@ -124,6 +124,8 @@ def single_trial_tf(epochs):
     ----------
     epochs : Epochs object
         The epochs to calculate TF analysis on.
+    n_cycles : int
+        The number of cycles for the Morlet wavelets.
 
     Returns
     -------
@@ -132,7 +134,6 @@ def single_trial_tf(epochs):
 
     results = []
     frequencies = np.arange(6., 30., 1.)
-    n_cycles = 5.
     for j in range(len(epochs)):
         tfr = cwt_morlet(epochs.get_data()[j],
                          sfreq=epochs.info["sfreq"],

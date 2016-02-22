@@ -131,9 +131,9 @@ def single_trial_tf(epochs, n_cycles=4.):
     -------
     results : numpy array
     """
-
     results = []
     frequencies = np.arange(6., 30., 1.)
+
     for j in range(len(epochs)):
         tfr = cwt_morlet(epochs.get_data()[j],
                          sfreq=epochs.info["sfreq"],
@@ -143,3 +143,46 @@ def single_trial_tf(epochs, n_cycles=4.):
                          zero_mean=False)
         results.append(tfr)
     return results
+
+
+def calc_spatial_resolution(freqs, n_cycles):
+    """Calculate the spatial resolution for a Morlet wavelet.
+
+    The formula is: (freqs * cycles)*2.
+
+    Parameters
+    ----------
+    freqs : numpy array
+        The frequencies to be calculated.
+    n_cycles : int or numpy array
+        The number of cycles used. Can be integer for the same cycle for all
+        frequencies, or a numpy array for individual cycles per frequency.
+
+    Returns
+    -------
+    result : numpy array
+        The results
+    """
+    return (freqs / float(n_cycles)) * 2
+
+
+def calc_wavelet_duration(freqs, n_cycles):
+    """Calculate the wavelet duration for a Morlet wavelet in ms.
+
+    The formula is: (cycle / frequencies / pi)*1000
+
+    Parameters
+    ----------
+    freqs : numpy array
+        The frequencies to be calculated.
+    n_cycles : int or numpy array
+        The number of cycles used. Can be integer for the same cycle for all
+        frequencies, or a numpy array for individual cycles per frequency.
+
+    Returns
+    -------
+    result : numpy array
+        The results
+    """
+    return (float(n_cycles) / freqs / np.pi) * 1000
+

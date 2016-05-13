@@ -65,3 +65,4 @@ target/
 *.bdf
 tmp/
 data/
+.Rproj.user

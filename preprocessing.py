@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 n_jobs = 1
 reject = dict(eeg=300e-6)  # uVolts (EEG)
 l_freq, h_freq, n_freq = 1, 98, 50  # Frequency setting for high, low, Noise
-decim = 1  # decim value
+decim = 10  # decim value
 montage = mne.channels.read_montage("biosemi64")
 
 # data_folder = "/home/mje/Projects/agency_connectivity/data/"
@@ -31,7 +31,7 @@ def convert_bdf2fif(subject, data_folder):
     -------
     None, but save fiff file.
     """
-    raw = mne.io.read_raw_edf(data_folder + "%s_ds.bdf" % subject,
+    raw = mne.io.read_raw_edf(data_folder + "%s.bdf" % subject,
                               montage=montage,
                               eog=["EXG3", "EXG4", "EXG5", "EXG6"],
                               misc=["EXG1", "EXG2", "EXG7", "EXG8"],
@@ -53,7 +53,7 @@ def filter_raw(subject, data_folder):
     raw.apply_proj()
     raw.notch_filter(n_freq)
     raw.filter(l_freq, h_freq)
-    raw.save(data_folder + "%s_ds_bp-raw.fif" % subject, overwrite=True)
+    raw.save(data_folder + "%s_bp-raw.fif" % subject, overwrite=True)
 
 
 def compute_ica(subject, data_folder):
@@ -64,7 +64,7 @@ def compute_ica(subject, data_folder):
     subject : string
         the subject id to be loaded
     """
-    raw = mne.io.Raw(data_folder + "%s_ds_bp-raw.fif" % subject,
+    raw = mne.io.Raw(data_folder + "%s_bp-raw.fif" % subject,
                      preload=True)
     raw.set_montage = montage
     raw.apply_proj()
@@ -142,10 +142,10 @@ def compute_ica(subject, data_folder):
 
     ##########################################################################
     # Apply the solution to Raw, Epochs or Evoked like this:
-    raw_ica = ica.apply(raw, copy=False)
+    raw_ica = ica.apply(raw)
     ica.save(data_folder + "%s-ica.fif" % subject)  # save ICA componenets
     # Save raw with ICA removed
-    raw_ica.save(data_folder + "%s_ds_bp_ica-raw.fif" % subject,
+    raw_ica.save(data_folder + "%s_bp_ica-raw.fif" % subject,
                  overwrite=True)
     plt.close("all")
 
@@ -169,12 +169,12 @@ def epoch_data(subject, data_folder, save=True):
     event_id = {'voluntary': 243,
                 'involuntary': 219}
 
-    raw = mne.io.Raw(data_folder + "%s_ds_bp_ica-raw.fif" % subject)
+    raw = mne.io.Raw(data_folder + "%s_bp_ica-raw.fif" % subject)
     events = mne.find_events(raw)
 
     #   Setup for reading the raw data
     picks = mne.pick_types(raw.info, meg=False, eeg=True,
-                           stim=False, exclude='bads')
+                           stim=True, eog=True, exclude='bads')
     # Read epochs
     epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=picks,
                         baseline=(None, -1.8), reject=None,
@@ -235,3 +235,20 @@ def hilbert_process(raw, bands, return_evoked=False):
             results_dict[band] = epochs
 
     return results_dict
+
+
+def save_event_file(subject, data_folder):
+    """
+
+    Parameters
+    ----------
+    subject : subject name
+    data_folder : string
+
+    Returns
+    -------
+
+    """
+    raw = mne.io.Raw(data_folder + "%s_bp_ica-raw.fif" % subject, preload=True)
+    events = mne.find_events(raw)
+    mne.write_events(data_folder + "%s-eve.fif" % subject, events)

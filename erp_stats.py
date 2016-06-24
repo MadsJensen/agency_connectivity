@@ -146,7 +146,7 @@ vol_ave.plot_topomap(times=plot_times, ch_type='eeg',
                      show_names=False,
                      title="Voluntary")
 
-raw = mne.io.Raw( data_folder + "P2_ds_bp_ica-raw.fif", preload=True)
+raw = mne.io.Raw(data_folder + "P2_ds_bp_ica-raw.fif", preload=True)
 bands = {"alpha": [8, 12],
          "beta": [13, 25],
          "gamma_low": [30, 48],

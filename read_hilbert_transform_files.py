@@ -11,26 +11,22 @@ from glob import glob
 from my_settings import *
 
 for subject in subjects:
-    inv_hilbert_files = list(set(glob(
-        data_path + "bst_dir/%s/Involuntary/*hilbert*" % subject)) - set(glob(
-            data_path + "bst_dir/%s/Involuntary/*hilbert*meas*" % subject)))
+    inv_hilbert_files = glob(data_path + "/data/%s/*nvoluntary/*hilbert*"
+                             % subject)
 
     inv_hilbert_files.sort()
-    inv_hilbert_files = inv_hilbert_files[:-1]
 
-    inv_ts = np.empty([len(inv_hilbert_files), 68, 2049, 5],
+    inv_ts = np.empty([len(inv_hilbert_files), 79, 2049, 6],
                       dtype="complex128")
     for j, t in enumerate(inv_hilbert_files):
         inv_ts[j] = sio.loadmat(t)["TF"]
 
-    vol_hilbert_files = list(set(glob(
-        data_path + "bst_dir/%s/Voluntary/*hilbert*" % subject)) - set(glob(
-            data_path + "bst_dir/%s/Voluntary/*hilbert*meas*" % subject)))
+    vol_hilbert_files = glob(data_path + "/data/%s/voluntary/*hilbert*"
+                             % subject)
 
     vol_hilbert_files.sort()
-    vol_hilbert_files = vol_hilbert_files[:-1]
 
-    vol_ts = np.empty([len(vol_hilbert_files), 68, 2049, 5],
+    vol_ts = np.empty([len(vol_hilbert_files), 79, 2049, 6],
                       dtype="complex128")
     for j, t in enumerate(vol_hilbert_files):
         vol_ts[j] = sio.loadmat(t)["TF"]

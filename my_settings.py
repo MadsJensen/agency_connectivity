@@ -1,5 +1,6 @@
 # data_path = '/home/mje/Projects/agency_connectivity/Data'
-data_path = '/media/mje/My_Book/Data/agency_connectivity/'
+# data_path = '/media/mje/My_Book/Data/agency_connectivity/'
+data_path = "/Volumes/My_Passport/agency_connectivity/agency_connect_2/"
 
 subjects_dir = data_path + "fs_subjects_dir/"
 save_folder = data_path + "filter_ica_data/"

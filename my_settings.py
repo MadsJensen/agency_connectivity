@@ -11,8 +11,10 @@ mne_folder = data_path + "minimum_norm/"
 log_folder = data_path + "log_files/"
 graph_data = data_path + "graph_data/"
 
+# subjects = ["p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11",
+#            "p12", "p13", "P14", "P15", "P16", "P17", "P18", "P19"]
 subjects = ["p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11",
-            "p12", "p13", "P14", "P15", "P16", "P17", "P18", "P19"]
+            "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19"]
 
 bands = {'delta': [2, 4],
     'theta':[5, 7],

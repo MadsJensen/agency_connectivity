@@ -8,11 +8,11 @@ from my_settings import *
 from preprocessing import *
 
 # data_folder = '/media/mje/My_Book/Data/agency_connectivity/'
-data_folder = "/Volumes/My_Passport/agency_connectivity/Data/"
+data_folder = "/Volumes/My_Passport/agency_connectivity/tmp/"
 
 # subjects = ["P2", "P3", "P4", "P5", "P6", "P7", "P8",
 #             "P10", "P11", "P12", "P13"]
-subjects = ["P6"]
+subjects = ["P2"]
 
 
 for subject in subjects:

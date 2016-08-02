@@ -27,14 +27,14 @@ for subject in subjects:
         ht_vol_bs = mne.baseline.rescale(
             np.abs(ht_vol[:, :, :, j])**2,
             times,
-            baseline=(-2, -1.5),
-            mode="zscore")
+            baseline=(-1.85, -1.5),
+            mode="percent")
 
         ht_invol_bs = mne.baseline.rescale(
             np.abs(ht_invol[:, :, :, j])**2,
             times,
-            baseline=(-2, -1.5),
-            mode="zscore")
+            baseline=(-1.85, -1.5),
+            mode="percent")
 
         for ts in ht_vol_bs:
             nits = TimeSeries(ts[:, 768:1024],

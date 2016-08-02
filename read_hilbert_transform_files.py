@@ -10,6 +10,8 @@ from glob import glob
 
 from my_settings import *
 
+subjects = ["p17"]
+
 for subject in subjects:
     inv_hilbert_files = glob(data_path + "/data/%s/*nvoluntary/*hilbert*"
                              % subject)

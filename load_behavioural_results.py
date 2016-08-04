@@ -13,7 +13,6 @@ from my_settings import *
 
 data = sio.loadmat(data_path + "behavoural_results.mat")["data_all"]
 
-column_keys = ["subject", "condition", "binding", "trial_status"]
 b_df = pd.DataFrame()
 
 for j in range(len(data)):
@@ -23,36 +22,44 @@ for j in range(len(data)):
     if len(invol_trials) is 90:
         invol_trials = invol_trials[1:]
 
-    error = np.std(data[j, 3]) * 2
+    error = (np.std(data[j, 3]) * 2 + invol_trials.mean(),
+             -np.std(data[j, 3]) * 2 + invol_trials.mean())
+             
     for i in range(len(invol_trials)):
         row = pd.DataFrame([{"subject": "p%s" % (j + 2),
                              "condition": "invol",
                              "binding": invol_trials[i] - baseline,
                              "trial_number": i + 1,
                              "trial_status":
-                             np.abs(invol_trials[i] - baseline) < error,
-                             "error": error}])
+                             error[1] <=
+                             (invol_trials[i] - baseline) <= error[0],
+                             "error": error,
+                             "raw_trial": invol_trials[i],
+                             "baseline": baseline}])
         b_df = b_df.append(row, ignore_index=True)
 
-column_keys = ["subject", "condition", "binding", "trial_status"]
 # b_df = pd.DataFrame()
 
 for j in range(len(data)):
     baseline = data[j, 0].mean()
     vol_trials = data[j, 2].squeeze()
 
-    if len(invol_trials) is 90:
-        vol_trials = invol_trials[1:]
+    # if len(vol_trials) is 90:
+    #     vol_trials = vol_trials[1:]
 
-    error = np.std(data[j, 3]) * 2
-    for i in range(len(invol_trials)):
+    error = (np.std(data[j, 3]) * 2 + vol_trials.mean(),
+             -np.std(data[j, 3]) * 2 + vol_trials.mean())
+    for i in range(len(vol_trials)):
         row = pd.DataFrame([{"subject": "p%s" % (j + 2),
                              "condition": "vol",
-                             "binding": invol_trials[i] - baseline,
+                             "binding": vol_trials[i] - baseline,
                              "trial_number": i + 1,
                              "trial_status":
-                             np.abs(invol_trials[i] - baseline) < error,
-                             "error": error}])
+                             error[1] <=
+                             (vol_trials[i] - baseline) <= error[0],
+                             "error": error,
+                             "raw_trial": vol_trials[i],
+                             "baseline": baseline}])
         b_df = b_df.append(row, ignore_index=True)
 
 # Calculate mean correlation

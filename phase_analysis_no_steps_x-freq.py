@@ -8,6 +8,7 @@ import numpy as np
 # import mne
 import matplotlib.pyplot as plt
 import pandas as pd
+from itertools import combinations
 
 from my_settings import *
 
@@ -37,56 +38,50 @@ label_dict = {"ba_1_4_r": [1, 52],
 #              "ba_4_39_r": [50, 52],
 #              "ba_39_39": [49, 50]}
 
-# bands = ["delta", "theta", "alpha", "beta", "gamma1", "gamma2"]
-bands = ["beta"]
+bands = ["delta", "theta", "alpha", "beta", "gamma1", "gamma2"]
+# bands = ["beta"]
 
+bands_numbers = list(np.arange(0, len(bands), 1))
 
-subjects = ["p9"]
+cross_band_combinations = list(combinations(bands_numbers, 2))
+
+# subjects = ["p9"]
 labels = list(np.load(data_path + "label_names.npy"))
 
 times = np.arange(-2000, 2001, 1.95325)
 times = times / 1000.
 
-window_length = 153
-step_length = 15
+window_start, window_end = 768, 1024
 
 results_all = pd.DataFrame()
 for subject in subjects:
     print("Working on: " + subject)
     # ht_vol = np.load(tf_folder + "/%s_vol_HT-comp.npy" %
     #                  subject)
-    ht_invol = np.load(tf_folder + "%s_inv_HT-comp.npy" % subject)
-    b_tmp = b_df[(b_df.subject == subject) & (b_df.condition == "invol"
-                                              )].reset_index()
+    for comb in cross_band_combinations:
+        ht_invol = np.load(tf_folder + "%s_inv_HT-comp.npy" % subject)
+        b_tmp = b_df[(b_df.subject == subject) & (b_df.condition == "invol"
+                                                  )].reset_index()
 
-    for k, band in enumerate(bands):
-        k = 3
-        # results_invol = {}
-        ht_invol_band = ht_invol[-89:, :, :, k]
+        for k, band in enumerate(bands):
+            k = 3
+            # results_invol = {}
+            ht_invol_band = ht_invol[-89:, :, :, k]
 
-        for lbl in label_dict.keys():
-            step = 1
-            j = 768  # times index to start
-            while times[window_length + j] < times[1040]:
-                window_start = j
-                window_end = j + window_length
-
+            for lbl in label_dict.keys():
                 res = pd.DataFrame(
                     calc_ISPC_time_between(
                         ht_invol_band,
                         chan_1=label_dict[lbl][0], chan_2=label_dict[lbl][1]),
                     columns=["ISPC"])
-                res["step"] = step
                 res["subject"] = subject
                 res["label"] = lbl
                 res["binding"] = b_tmp.binding
                 res["trial_status"] = b_tmp.trial_status
-                res["condition"] = "invol"
+                res["condition"] = "testing"
                 res["band"] = band
-                res["trial_nr"] = np.arange(1, 90, 1)
+                res["trial_nr"] = np.arange(2, 91, 1)
                 results_all = results_all.append(res)
-                j += step_length
-                step += 1
 
     print("Working on: " + subject)
     # ht_vol = np.load(tf_folder + "/%s_vol_HT-comp.npy" %
@@ -101,25 +96,16 @@ for subject in subjects:
         ht_vol_band = ht_vol[-89:, :, :, k]
 
         for lbl in label_dict.keys():
-            step = 1
-            j = 768  # times index to start
-            while times[window_length + j] < times[1040]:
-                window_start = j
-                window_end = j + window_length
-
-                res = pd.DataFrame(
-                    calc_ISPC_time_between(
-                        ht_vol_band,
-                        chan_1=label_dict[lbl][0], chan_2=label_dict[lbl][1]),
-                    columns=["ISPC"])
-                res["step"] = step
-                res["subject"] = subject
-                res["label"] = lbl
-                res["binding"] = b_tmp.binding
-                res["trial_status"] = b_tmp.trial_status
-                res["condition"] = "vol"
-                res["band"] = band
-                res["trial_nr"] = np.arange(1, 90, 1)
-                results_all = results_all.append(res)
-                j += step_length
-                step += 1
+            res = pd.DataFrame(
+                calc_ISPC_time_between(
+                    ht_vol_band,
+                    chan_1=label_dict[lbl][0], chan_2=label_dict[lbl][1]),
+                columns=["ISPC"])
+            res["subject"] = subject
+            res["label"] = lbl
+            res["binding"] = b_tmp.binding
+            res["trial_status"] = b_tmp.trial_status
+            res["condition"] = "learning"
+            res["band"] = band
+            res["trial_nr"] = np.arange(2, 91, 1)
+            results_all = results_all.append(res)

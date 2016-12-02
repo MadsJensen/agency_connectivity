@@ -48,8 +48,8 @@ label_dict = {"ba_1_4_r": [1, 52],
 #              "ba_4_39_r": [50, 52],
 #              "ba_39_39": [49, 50]}
 
-# bands = ["delta", "theta", "alpha", "beta", "gamma1", "gamma2"]
-bands = ["beta"]
+bands = ["delta", "theta", "alpha", "beta", "gamma1", "gamma2"]
+# bands = ["beta"]
 
 # subjects = ["p9"]
 labels = list(np.load(data_path + "label_names.npy"))
@@ -69,7 +69,7 @@ for subject in subjects:
                                               )].reset_index()
 
     for k, band in enumerate(bands):
-        k = 3
+        # k = 3
         # results_invol = {}
         ht_invol_band = ht_invol[-89:, :, :, k]
 
@@ -83,7 +83,7 @@ for subject in subjects:
             res["label"] = lbl
             res["binding"] = b_tmp.binding
             res["trial_status"] = b_tmp.trial_status
-            res["condition"] = "invol"
+            res["condition"] = "testing"
             res["band"] = band
             res["trial_nr"] = np.arange(2, 91, 1)
             results_all = results_all.append(res)
@@ -94,9 +94,9 @@ for subject in subjects:
     ht_vol = np.load(tf_folder + "%s_vol_HT-pow_zscore.npy" % subject)
     b_tmp = b_df[(b_df.subject == subject) & (b_df.condition == "vol"
                                               )].reset_index()
-
+1
     for k, band in enumerate(bands):
-        k = 3
+        # k = 3
         # Results_vol = {}
         ht_vol_band = ht_vol[-89:, :, :, k]
 
@@ -110,7 +110,7 @@ for subject in subjects:
             res["label"] = lbl
             res["binding"] = b_tmp.binding
             res["trial_status"] = b_tmp.trial_status
-            res["condition"] = "vol"
+            res["condition"] = "learning"
             res["band"] = band
             res["trial_nr"] = np.arange(2, 91, 1)
             results_all = results_all.append(res)

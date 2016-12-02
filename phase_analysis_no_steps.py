@@ -25,7 +25,7 @@ def calc_ISPC_time_between(data, chan_1=52, chan_2=1):
             np.mean(
                 np.exp(1j * (np.angle(data[i, chan_1, window_start:window_end])
                              - np.angle(data[i, chan_2, window_start:
-                                             window_end])))))
+                                            window_end])))))
     return result
 
 
@@ -37,8 +37,8 @@ label_dict = {"ba_1_4_r": [1, 52],
 #              "ba_4_39_r": [50, 52],
 #              "ba_39_39": [49, 50]}
 
-# bands = ["delta", "theta", "alpha", "beta", "gamma1", "gamma2"]
-bands = ["beta"]
+bands = ["delta", "theta", "alpha", "beta", "gamma1", "gamma2"]
+# bands = ["beta"]
 
 
 # subjects = ["p9"]
@@ -59,7 +59,7 @@ for subject in subjects:
                                               )].reset_index()
 
     for k, band in enumerate(bands):
-        k = 3
+        # k = 3
         # results_invol = {}
         ht_invol_band = ht_invol[-89:, :, :, k]
 
@@ -86,7 +86,7 @@ for subject in subjects:
                                               )].reset_index()
 
     for k, band in enumerate(bands):
-        k = 3
+        # k = 3
         # Results_vol = {}
         ht_vol_band = ht_vol[-89:, :, :, k]
 

@@ -36,7 +36,7 @@ def convert_bdf2fif(subject, data_folder):
                               eog=["EXG3", "EXG4", "EXG5", "EXG6"],
                               misc=["EXG1", "EXG2", "EXG7", "EXG8"],
                               preload=True)
-    raw.add_eeg_average_proj()
+    raw.set_eeg_reference()
     raw.save(data_folder + "%s-raw.fif" % subject, overwrite=True)
 
 

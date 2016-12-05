@@ -94,7 +94,7 @@ for subject in subjects:
     ht_vol = np.load(tf_folder + "%s_vol_HT-pow_zscore.npy" % subject)
     b_tmp = b_df[(b_df.subject == subject) & (b_df.condition == "vol"
                                               )].reset_index()
-1
+
     for k, band in enumerate(bands):
         # k = 3
         # Results_vol = {}

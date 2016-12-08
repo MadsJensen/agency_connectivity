@@ -9,12 +9,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from my_settings import *
+from my_settings import (data_path, subjects, tf_folder)
 
 plt.style.use("ggplot")
 
 b_df = pd.read_csv(
-    "/Users/au194693/projects/agency_connectivity/data/behavioural_results.csv")
+    "/Users/au194693/projects/agency_connectivity/data/" +
+    "behavioural_results.csv")
 
 
 def calc_ISPC_time_between(data, chan_1=52, chan_2=1):
@@ -25,21 +26,22 @@ def calc_ISPC_time_between(data, chan_1=52, chan_2=1):
             np.mean(
                 np.exp(1j * (np.angle(data[i, chan_1, window_start:window_end])
                              - np.angle(data[i, chan_2, window_start:
-                                            window_end])))))
+                                             window_end])))))
     return result
 
 
-label_dict = {"ba_1_4_r": [1, 52],
-              "ba_1_4_l": [0, 51],
-              "ba_4_4": [51, 52],
-              "ba_1_1": [0, 1]}
+label_dict = {
+    "ba_1_4_r": [1, 52],
+    "ba_1_4_l": [0, 51],
+    "ba_4_4": [51, 52],
+    "ba_1_1": [0, 1]
+}
 #              "ba_4_39_l": [49, 51],
 #              "ba_4_39_r": [50, 52],
 #              "ba_39_39": [49, 50]}
 
 bands = ["delta", "theta", "alpha", "beta", "gamma1", "gamma2"]
 # bands = ["beta"]
-
 
 # subjects = ["p9"]
 labels = list(np.load(data_path + "label_names.npy"))
@@ -67,7 +69,8 @@ for subject in subjects:
             res = pd.DataFrame(
                 calc_ISPC_time_between(
                     ht_invol_band,
-                    chan_1=label_dict[lbl][0], chan_2=label_dict[lbl][1]),
+                    chan_1=label_dict[lbl][0],
+                    chan_2=label_dict[lbl][1]),
                 columns=["ISPC"])
             res["subject"] = subject
             res["label"] = lbl
@@ -94,7 +97,8 @@ for subject in subjects:
             res = pd.DataFrame(
                 calc_ISPC_time_between(
                     ht_vol_band,
-                    chan_1=label_dict[lbl][0], chan_2=label_dict[lbl][1]),
+                    chan_1=label_dict[lbl][0],
+                    chan_2=label_dict[lbl][1]),
                 columns=["ISPC"])
             res["subject"] = subject
             res["label"] = lbl

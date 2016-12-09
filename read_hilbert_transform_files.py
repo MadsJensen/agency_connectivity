@@ -8,7 +8,7 @@ import numpy as np
 import scipy.io as sio
 from glob import glob
 
-from my_settings import *
+from my_settings import (data_path, tf_folder)
 
 subjects = ["p17"]
 

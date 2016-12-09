@@ -5,14 +5,15 @@ import subprocess
 cmd = "/usr/local/common/meeg-cfin/configurations/bin/submit_to_isis"
 proj_code = "MINDLAB2015_MEG-CorticalAlphaAttention"
 
-subjects = [
-    "p21", "p22", "p23", "p24", "p25", "p26", "p27", "p28", "p29", "p30",
-    "p31", "p32", "p33", "p35", "p36"
-]
+# subjects = [
+#     "p21", "p22", "p23", "p24", "p25", "p26", "p27", "p28", "p29", "p30",
+#     "p31", "p32", "p33", "p35", "p36"
+# ]
 
+subjects = ["p34", "p37", "p38"]
 # subjects = ["fs_p6"]
 
-subjects_dir = "/home/mje/Dropbox/fs_struct"
+subjects_dir ="/Volumes/My_Passport/agency_connectivity/fs_subjects_dir"
 
 for subject in subjects:
     convert_cmd_lh = "mri_surf2surf --srcsubject fsaverage " +  \

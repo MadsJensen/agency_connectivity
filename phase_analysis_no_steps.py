@@ -9,13 +9,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from my_settings import (data_path, subjects, tf_folder)
+from my_settings import (data_path, subjects, tf_folder, subjects_test,
+                         subjects_ctl)
 
 plt.style.use("ggplot")
 
-b_df = pd.read_csv(
-    "/Users/au194693/projects/agency_connectivity/data/" +
-    "behavioural_results.csv")
+b_df = pd.read_csv("/Users/au194693/projects/agency_connectivity/data/" +
+                   "behavioural_results.csv")
 
 
 def calc_ISPC_time_between(data, chan_1=52, chan_2=1):
@@ -40,8 +40,8 @@ label_dict = {
 #              "ba_4_39_r": [50, 52],
 #              "ba_39_39": [49, 50]}
 
-bands = ["delta", "theta", "alpha", "beta", "gamma1", "gamma2"]
-# bands = ["beta"]
+# bands = ["delta", "theta", "alpha", "beta", "gamma1", "gamma2"]
+bands = ["beta"]
 
 # subjects = ["p9"]
 labels = list(np.load(data_path + "label_names.npy"))
@@ -52,7 +52,7 @@ times = times / 1000.
 window_start, window_end = 768, 1024
 
 results_all = pd.DataFrame()
-for subject in subjects:
+for subject in subjects_test:
     print("Working on: " + subject)
     # ht_vol = np.load(tf_folder + "/%s_vol_HT-comp.npy" %
     #                  subject)

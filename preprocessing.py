@@ -308,8 +308,9 @@ def save_event_file_ctl(subject, data_folder):
         "P38": 254
     }
 
+    # extract only the test trails, remember python is 0 index!
     idx = np.concatenate(
-        [np.arange(31, 90, 2), np.arange(121, 180, 2), np.arange(211, 270, 2)])
+        [np.arange(30, 89, 2), np.arange(120, 179, 2), np.arange(210, 269, 2)])
 
     raw = mne.io.Raw(data_folder + "%s_bp_ica-raw.fif" % subject,
                      preload=False)

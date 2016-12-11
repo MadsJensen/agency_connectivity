@@ -276,13 +276,13 @@ def save_event_file(subject, data_folder):
 
 def save_event_file_ctl(subject, data_folder):
     """
-
     Parameters
     ----------
     subject : subject name
     data_folder : string
 
-    Returns
+    Returns : None
+        Save the events file to the data_folder.
     -------
 
     """
@@ -315,7 +315,12 @@ def save_event_file_ctl(subject, data_folder):
     raw = mne.io.Raw(data_folder + "%s_bp_ica-raw.fif" % subject,
                      preload=False)
     events = mne.find_events(raw)
+
+    # find the events that match the individual triggers
     test_events = events[:, 2] == test_trigger[subject]
-    events = events[test_events]
-    events = events[idx]
+
+    events = events[test_events]  # select the events
+    events = events[idx]  # select the test trials
+
+    # save events file
     mne.write_events(data_folder + "%s-eve.fif" % subject, events)

@@ -11,8 +11,8 @@ from glob import glob
 from my_settings import (data_path, tf_folder)
 
 subjects = [
-    "p22", "p23", "p24", "p25", "p26", "p27", "p28", "p29", "p30", "p31",
-    "p32", "p33", "p35", "p36"
+    "p21", "p22", "p23", "p24", "p25", "p26", "p27", "p28", "p29", "p30",
+    "p31", "p32", "p33", "p34", "p35", "p36", "p37", "p38"
 ]
 
 for subject in subjects:

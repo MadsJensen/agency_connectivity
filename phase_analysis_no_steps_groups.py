@@ -13,7 +13,7 @@ from my_settings import (data_path, tf_folder, subjects_test, subjects_ctl)
 
 plt.style.use("ggplot")
 
-b_df = pd.read_csv("/Users/au194693/projects/agency_connectivity/data/" +
+b_df = pd.read_csv("/Volumes/My_Passport/agency_connectivity/results/" +
                    "behavioural_results.csv")
 
 
@@ -77,12 +77,17 @@ for subject in subjects_test:
             res["trial_status"] = b_tmp.trial_status
             res["condition"] = "testing"
             res["band"] = band
+            res["group"] = "test"
             res["trial_nr"] = np.arange(2, 91, 1)
             results_all = results_all.append(res)
 
-    print("Working on: " + subject)
+    # print("Working on: " + subject)
     # ht_vol = np.load(tf_folder + "/%s_vol_HT-comp.npy" %
     #                  subject)
+
+    # control group
+b_df = pd.read_csv("/Volumes/My_Passport/agency_connectivity/results/" +
+                   "behavioural_results_ctl.csv")
 
 for subject in subjects_ctl:
     print("Working on: " + subject)
@@ -110,7 +115,8 @@ for subject in subjects_ctl:
             res["trial_status"] = b_tmp.trial_status
             res["condition"] = "testing"
             res["band"] = band
+            res["group"] = "ctl"
             res["trial_nr"] = np.arange(2, 91, 1)
             results_all = results_all.append(res)
 
-    print("Working on: " + subject)
+    # print("Working on: " + subject)

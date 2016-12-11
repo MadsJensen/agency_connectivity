@@ -4,9 +4,11 @@ Created on Fri May 20 20:50:00 2016
 
 @author: mje
 """
-from my_settings import *
-from preprocessing import (convert_bdf2fif, filter_raw, compute_ica,
-                           save_event_file_ctl)
+# from my_settings import (data)
+# from preprocessing import (convert_bdf2fif, filter_raw, compute_ica,
+#                            save_event_file_ctl)
+
+from preprocessing import save_event_file_ctl
 
 # data_folder = '/media/mje/My_Book/Data/agency_connectivity/'
 # data_folder = "/Volumes/My_Passport/agency_connectivity/tmp/"

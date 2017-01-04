@@ -38,7 +38,7 @@ labels = mne.read_labels_from_annot(
 
 # make combinations of label indices
 combinations = []
-label_index = [0, 1, 49, 50, 51, 52, 68, 69]
+label_index = [0, 1, 52, 53, 54, 55, 68, 69]
 for L in range(0, len(label_index) + 1):
     for subset in itertools.combinations(label_index, L):
         if len(subset) == 2:

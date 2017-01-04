@@ -5,11 +5,10 @@
 """
 
 import numpy as np
-# import mne
+import mne
 import matplotlib.pyplot as plt
 import pandas as pd
 import itertools
-import mne
 
 from my_settings import (data_path, tf_folder, subjects_test, subjects_ctl,
                          subjects_dir)

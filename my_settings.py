@@ -2,7 +2,7 @@
 # data_path = '/media/mje/My_Book/Data/agency_connectivity/'
 data_path = "/Volumes/My_Passport/agency_connectivity/agency_connect_2/"
 
-subjects_dir = data_path + "fs_subjects_dir/"
+subjects_dir = "/Volumes/My_Passport/agency_connectivity/fs_subjects_dir/"
 save_folder = data_path + "filter_ica_data/"
 maxfiltered_folder = data_path + "maxfiltered_data/"
 epochs_folder = data_path + "epoched_data/"

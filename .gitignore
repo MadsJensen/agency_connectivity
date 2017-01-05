@@ -64,5 +64,5 @@ target/
 # data files
 *.bdf
 tmp/
-data/
+# data/
 .Rproj.user

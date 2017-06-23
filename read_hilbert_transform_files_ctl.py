@@ -30,6 +30,6 @@ for subject in subjects:
     test_ts = np.empty(
         [len(test_hilbert_files), 79, 2049, 5], dtype="complex128")
     for j, t in enumerate(test_hilbert_files):
-        test_ts[j] = sio.loadmat(t)["TF"]
+        test_ts[j] = sio.loadmat(t)["TF"][:, :, -5:]
 
     np.save(tf_folder + "%s_test_HT-comp.npy" % subject, test_ts)

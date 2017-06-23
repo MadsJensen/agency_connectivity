@@ -8,11 +8,11 @@ import numpy as np
 import scipy.io as sio
 from glob import glob
 
-from my_settings import (data_path, tf_folder, subjects_ctl)
+from my_settings import (data_path, tf_folder, subjects_ctl, subjects_test)
 
-# subjects = ["p17"]
+subjects = subjects_test + subjects_ctl
 
-for subject in subjects_ctl:
+for subject in subjects:
     print("working on: %s" % subject)
     inv_pow_files = glob(data_path + "/data/%s/involuntary/timefreq*zscore.mat"
                          % subject)
@@ -23,4 +23,4 @@ for subject in subjects_ctl:
     for j, t in enumerate(inv_pow_files):
         inv_ts[j] = sio.loadmat(t)["TF"][:, :, :]
 
-    np.save(tf_folder + "%s_test_HT-pow_zscore.npy" % subject, inv_ts)
+    np.save(tf_folder + "%s_inv_HT-pow_zscore.npy" % subject, inv_ts)

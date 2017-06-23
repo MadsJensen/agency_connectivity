@@ -211,7 +211,7 @@ cv_scores = cross_val_score(lr_mean, X_scl, y, scoring="roc_auc", cv=cv)
 
 from sklearn.feature_selection import SelectPercentile, f_classif
 
-selector = SelectPercentile(f_classif, percentile=10)
+selector = SelectPercentile(f_classif, percentile=5)
 selector.fit(X, y)
 scores = -np.log10(selector.pvalues_)
 scores /= scores.max()

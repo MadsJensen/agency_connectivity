@@ -1,0 +1,143 @@
+---
+title: "Data Analysis"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Phase analysis
+```{r}
+setwd("~/projects/agency_connectivity/data")
+
+dat <- read.csv("phase_data_no-step_both_grps_clean_all-freqs_0-500.csv")
+data_clean <- subset(dat, trial_status == "True")
+```
+
+## Mixed model analysis
+```{r Mixed_model_phase}
+require(lme4)
+m_ispc_1 <- lmer(binding ~ 1 + (1 | subject), data=data_clean, REML = FALSE)
+                    # control=lmerControl(optCtrl=list(maxfun=2e4)))
+m_ispc_2 <- update(m_ispc_1, .~. + group)
+m_ispc_3 <- update(m_ispc_2, .~. + ISPC)
+m_ispc_4 <- update(m_ispc_3, .~. + label)
+m_ispc_5 <- update(m_ispc_4, .~. + band)
+m_ispc_6 <- update(m_ispc_5, .~. + group:label )
+m_ispc_7 <- update(m_ispc_6, .~. + group:ISPC)
+m_ispc_8 <- update(m_ispc_7, .~. + label:ISPC)
+m_ispc_9 <- update(m_ispc_8, .~. + label:band)
+m_ispc_10 <- update(m_ispc_9, .~. + group:band)
+m_ispc_11 <- update(m_ispc_10, .~. + ISPC:band)
+m_ispc_12 <- update(m_ispc_11, .~. + label:ISPC:group)
+m_ispc_13 <- update(m_ispc_12, .~. + label:ISPC:band)
+m_ispc_14 <- update(m_ispc_13, .~. + label:group:band)
+m_ispc_15 <- update(m_ispc_14, .~. + ISPC:group:band)
+m_ispc_16 <- update(m_ispc_15, .~. + label:group:band:ISPC)
+
+anova_res_phase <- anova(m_ispc_1, m_ispc_2, m_ispc_3, m_ispc_4, m_ispc_5, m_ispc_6, m_ispc_7,
+                         m_ispc_8, m_ispc_9, m_ispc_10, m_ispc_11, m_ispc_12, m_ispc_13, m_ispc_14,
+                         m_ispc_15, m_ispc_16)
+anova_res_phase_tbl <- as.data.frame(anova_res_phase)
+anova_res_phase_tbl$fdr <- p.adjust(anova_res_phase$`Pr(>Chisq)`, method = "fdr")
+
+print(anova_res_phase_tbl)
+```
+
+## Post test Phase
+```{r post-tests_phase}
+require(multcomp)
+summary(m_ispc_7)
+# ci_m_ispc_10 <- confint(m_ispc_10)
+# print(ci_m_ispc_10)
+
+## interaction model
+data_clean$IntFac <- interaction(data_clean$group, data_clean$band, drop=T)
+m_ispc_intact <-lmer(binding ~ IntFac  + (1 | subject),na.action=na.omit, data=data_clean)
+summary(m_ispc_intact)
+
+post_test_ispc <- glht(m_ispc_intact, linfct=mcp(IntFac = "Tukey"))
+summary(post_test_ispc)
+confint(post_test_ispc)
+```
+
+<!-- ## lsmeans test -->
+<!-- ```{r lsmeans test phase} -->
+<!-- require(lsmeans) -->
+<!-- lsmip(m_ispc_10, band ~ group) -->
+<!-- lsmeans(m_ispc_10, pairwise ~ band : group) -->
+<!-- ``` -->
+
+# Correlation analysis Power
+## Mixed model analysis
+```{r Mixed_model_corr}
+require(lme4)
+
+## load data
+dat <- read.csv("power_data_no-step_both_grps_clean_all-freqs_0-500.csv")
+data_clean <- subset(dat, trial_status == "True")
+data_sub <- subset(data_clean, band != "theta" & band != "gamma2")
+data_sub$band <- factor(levels(droplevels(data_sub$band)))
+
+
+## models
+m_corr_1 <- lmer(binding ~ 1 + (1 | subject), data=data_sub, REML = FALSE)
+m_corr_2 <- update(m_corr_1, .~. + group)
+m_corr_3 <- update(m_corr_2, .~. + r)
+m_corr_4 <- update(m_corr_3, .~. + label)
+m_corr_5 <- update(m_corr_4, .~. + band)
+m_corr_6 <- update(m_corr_5, .~. + group:label )
+m_corr_7 <- update(m_corr_6, .~. + group:r)
+m_corr_8 <- update(m_corr_7, .~. + label:r)
+m_corr_9 <- update(m_corr_8, .~. + label:band)
+m_corr_10 <- update(m_corr_9, .~. + group:band)
+m_corr_11 <- update(m_corr_10, .~. + r:band)
+m_corr_12 <- update(m_corr_11, .~. + label:r:group)
+m_corr_13 <- update(m_corr_12, .~. + label:r:band)
+m_corr_14 <- update(m_corr_13, .~. + label:group:band)
+m_corr_15 <- update(m_corr_14, .~. + r:group:band)
+m_corr_16 <- update(m_corr_15, .~. + label:group:band:r)
+
+anova_res_power <- anova(m_corr_1, m_corr_2, m_corr_3, m_corr_4, m_corr_5, m_corr_6, m_corr_7, 
+                         m_corr_8, m_corr_9, m_corr_10, m_corr_11, m_corr_12, m_corr_13, m_corr_14,
+                         m_corr_15, m_corr_16)
+anova_res_power_tbl <- as.data.frame(anova_res_power)
+anova_res_power_tbl$fdr <- p.adjust(anova_res_power_tbl$`Pr(>Chisq)`, method = "fdr")
+print(anova_res_power_tbl)
+```
+
+
+## Post test Pow
+
+```{r post-tests_power}
+require(multcomp)
+m_corr_11_reml <- update(m_corr_11, REML = TRUE)
+summary(m_corr_11_reml)
+# ci_m_corr_8 <- confint(m_corr_8)
+## print(ci_m_corr_8)
+
+## m_corr_8b <- update(m8, REML=T)
+## summary(m_corr_8b)
+## ci_m_corr_8b <- confint(m_corr_8b)
+## print(m_corr_8b)
+
+
+## interaction model
+data_sub$IntFac <- interaction(data_sub$group, data_sub$band, drop=T)
+m_corr_intact <-lmer(binding~ IntFac  + (1 | subject),na.action=na.omit, data=data_sub)
+summary(m_corr_intact)
+
+post_test_pow <- glht(m_corr_intact, linfct=mcp(IntFac = "Tukey"))
+summary(post_test_pow)
+confint(post_test_pow)
+```
+
+## lsmeans test
+```{r lsmeans_test_power}
+require(lsmeans)
+lsmip(m_corr_11_reml, band ~ r)
+corr_band_group <- lsmeans(m_corr_11_reml, pairwise ~ band : group)
+```
